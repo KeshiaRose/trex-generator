@@ -4,6 +4,8 @@ A quick way to generate manifest files for Tableau [dashboard extensions](https:
 
 ## How to Use
 
+Live version: https://trex-generator.sliceofkeesh.com
+
 Simply enter your information into the form and click download to get your manifest file!
 
 ## Validation Rules
