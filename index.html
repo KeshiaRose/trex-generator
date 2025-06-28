@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TREX Generator</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <script src="/client.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <br/>
+        <br/>
+        <br/>
+        <h1>🦖 Tableau TREX Generator</h1>
+        <p>
+            A quick way to generate manifest files for Tableau <a href="https://help.tableau.com/current/pro/desktop/en-gb/dashboard_extensions.htm" target="_blank">dashboard extensions</a> created by <a href="https://twitter.com/KroseKeshia" target="_blank">Keshia Rose</a>. Read the <a href="https://tableau.github.io/extensions-api/docs/trex_getstarted.html" target="_blank">docs</a> to learn how to build your own extension or try out this step-by-step <a href="https://github.com/tableau/datadev-hackathon/wiki/Update-a-date-filter-to-a-specific-range" target="_blank">mini-project</a>! You can check out the code for this generator on <a href="https://github.com/KeshiaRose/trex-generator" target="_blank">GitHub</a>.
+        </p>
+        <form id="generator" action="javascript:generate()">
+            <br/>
+            <div class="form-row">
+                <div class="form-group col-md-9">
+                  <label>Upload a TREX file to edit it or type in your values below:</label>
+                </div>
+              <div class="form-group col-md-3">
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="upload_trex" accept=".trex" onchange="parseTREX()">
+                            <label class="custom-file-label" for="upload_trex" id="for_upload_trex"></label>
+                        </div>
+                    </div>
+              </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-5">
+                    <label for="ext_name">Extension Name</label>
+                    <input type="text" class="form-control" id="ext_name" placeholder="My Awesome Extension" maxlength="1000" required>
+                </div>
+                <div class="form-group col-md-5">
+                    <label for="ext_id">Extension ID</label>
+                    <input type="text" class="form-control" id="ext_id" placeholder="com.awesomecompany.awesomeextension" maxlength="1000" required>
+                    <div class="invalid-feedback" id="ext_id_invalid"></div>
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="default_locale">Default Locale</label>
+                    <select class="form-control" id="default_locale" required>
+                        <option value="de_DE">de_DE</option>
+                        <option value="en_GB">en_GB</option>
+                        <option value="en_US" selected>en_US</option>
+                        <option value="es_ES">es_ES</option>
+                        <option value="fr_FR">fr_FR</option>
+                        <option value="ja_JP">ja_JP</option>
+                        <option value="pt_BR">pt_BR</option>
+                    <option value="zh_CN">zh_CN</option>
+                </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="ext_desc">Extension Description</label>
+                    <textarea class="form-control" id="ext_desc" rows="3" maxlength="1000" placeholder="My awesome extension adds infinite awesomeness to your dashboard!"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label for="auth_name">Your Name</label>
+                    <input type="text" class="form-control" id="auth_name" placeholder="Jane Shmane" maxlength="1000">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="auth_email">Email</label>
+                    <input type="email" class="form-control" id="auth_email" placeholder="jane.shmane@awesome.com" maxlength="1000">
+                    <div class="invalid-feedback" id="auth_email_invalid"></div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="auth_org">Organization</label>
+                    <input type="text" class="form-control" id="auth_org" placeholder="Awesome Inc." maxlength="1000">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="auth_site">Website</label>
+                    <input type="text" class="form-control" id="auth_site" placeholder="https://www.awesome.com" maxlength="2083">
+                  <div class="invalid-feedback" id="auth_site_invalid"></div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="ext_url">Extension URL</label>
+                    <input type="url" class="form-control" id="ext_url" placeholder="https://extension.awesome.com" maxlength="2083" required>
+                    <div class="invalid-feedback" id="ext_url_invalid"></div>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="api_version">Major API Version</label>
+                    <select class="form-control" id="api_version" required>
+                            <option value="1.0"> 1.0</option>
+                        </select>
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="ext_version">Extension Version</label>
+                    <input type="text" class="form-control" id="ext_version" value="1.0.0">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <div class="form-check">
+                        <br>
+                        <input class="form-check-input" type="checkbox" value="" id="full_data">
+                        <label class="form-check-label" for="full_data">
+                                    Requires full data access
+                                </label>
+                    </div>
+                </div>
+                <div class="form-group col-md-3">
+                    <div class="form-check">
+                        <br>
+                        <input class="form-check-input" type="checkbox" value="" id="context_menu">
+                        <label class="form-check-label" for="context_menu">
+                            Include configure context menu
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group col-md-3" style="float:left">
+                    <label for="icon">Icon</label>
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="icon" accept=".png, .gif, .jpg, .jpeg" onchange="previewFile()">
+                            <label class="custom-file-label" for="icon" id="for_icon"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-md-2" style="float:left">
+                    <img src="" style="max-height:70px;max-width:70px;" id="preview">
+                </div>
+            </div>
+          <div class="form-row">
+              <div class="form-group col-md-3">
+                  <button type="submit" class="btn btn-primary">Download your .trex!</button>
+              </div>
+<!--                   <div class="form-group col-md-9">
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" checked="true" id="share">
+                          <label class="form-check-label" for="share">
+                              Share your extension with the Tableau extensions team!
+                          </label>
+                      </div>
+                  </div> -->
+            </div>
+        </form>
+        <pre>
+            <code>
+                <div id="out" style="display:none;"></div>
+            </code>
+        </pre>
+    </div>
+    <img src="https://sliceofkeesh-hit-counter.glitch.me/counter.png?page=trex_generator" alt="" style="display:none;" aria-hidden="true"><!-- Hit tracker -->
+    <script>
+  if (navigator.appName == 'Microsoft Internet Explorer' ||  !!(navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv:11/)) || (typeof $.browser !== "undefined" && $.browser.msie == 1)){$("#generator").html("<i>IE not supported. Please use a modern browser.</i>")}
+  </script>
+</body>
+
+</html>

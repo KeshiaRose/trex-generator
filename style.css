@@ -1,0 +1,72 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  font-family: helvetica, arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.btn {
+  width: 100%;
+}
+
+.form-check {
+  margin-top: 7px;
+}
+
+.form-control::-webkit-input-placeholder {
+  color: #CCC;
+} /* WebKit, Blink, Edge */
+.form-control:-moz-placeholder {
+  color: #CCC;
+} /* Mozilla Firefox 4 to 18 */
+.form-control::-moz-placeholder {
+  color: #CCC;
+} /* Mozilla Firefox 19+ */
+.form-control:-ms-input-placeholder {
+  color: #CCC;
+} /* Internet Explorer 10-11 */
+.form-control::-ms-input-placeholder {
+  color: #CCC;
+} /* Microsoft Edge */
+
+.was-validated .form-control.is-valid,
+.was-validated .form-control:valid,
+.was-validated .custom-file-input:valid ~ .custom-file-label {
+  border-color: #ced4da;
+}
+
+.was-validated .form-control.is-invalid {
+  border-color: #dc3545;
+}
+
+.was-validated .form-check-input:valid ~ .form-check-label {
+  color: #212529;
+}
+
+label#for_upload_trex.custom-file-label::after, label#for_icon.custom-file-label::after {
+  content: "Upload TREX";
+  border: 1px solid #ced4da;
+  border-radius: 0.25em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+label#for_icon.custom-file-label::after {
+  content: "Choose image";
+}
+
+label#for_upload_trex.custom-file-label, label#for_icon.custom-file-label {
+  border: 0;
+}
+
+.custom-file-input {
+    cursor: pointer;
+}
